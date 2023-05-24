@@ -1,0 +1,8 @@
+nltk
+scikit-learn
+numpy
+matplotlib
+tensorflow
+fastapi
+uvicorn
+pydantic
