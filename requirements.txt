@@ -1,0 +1,8 @@
+fastapi
+pydantic
+nltk
+numpy
+scikit-learn
+torch
+transformers
+keybert
