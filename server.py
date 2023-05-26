@@ -6,8 +6,8 @@ from pydantic import BaseModel
 import nltk
 from frequencies import create_freq_dist
 from summarizer import Summarizer
-from keywords import KeyWordsExtractor
-from language_detector.training import prediction
+# from keywords import KeyWordsExtractor
+# from language_detector.training import prediction
 
 # nltk.download('stopwords')
 # nltk.download('punkt')
@@ -43,18 +43,18 @@ async def freq_dict(text: Text) -> JSONResponse:
     summary = summarizer.summarize()
     return JSONResponse({"Summary": summary})
 
-@app.post("/kwords")
-async def kwords(text: Text) -> JSONResponse: 
-    raw_text = text.text
-    kwords_extractor = KeyWordsExtractor(raw_text)
-    keywords = kwords_extractor.extract_keywords()
-    return JSONResponse({"Keywords": keywords})
+# @app.post("/kwords")
+# async def kwords(text: Text) -> JSONResponse: 
+#     raw_text = text.text
+#     kwords_extractor = KeyWordsExtractor(raw_text)
+#     keywords = kwords_extractor.extract_keywords()
+#     return JSONResponse({"Keywords": keywords})
 
-@app.post("/detect_lang")
-async def detect_lang(text: Text) -> JSONResponse: 
-    raw_text = text.text
-    language = prediction(raw_text)
-    return JSONResponse({"Language": language})
+# @app.post("/detect_lang")
+# async def detect_lang(text: Text) -> JSONResponse: 
+#     raw_text = text.text
+#     language = prediction(raw_text)
+#     return JSONResponse({"Language": language})
 
 
 # if __name__ == "__main__": 

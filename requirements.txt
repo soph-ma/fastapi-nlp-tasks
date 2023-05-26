@@ -2,6 +2,3 @@ fastapi
 pydantic
 nltk
 numpy
-scikit-learn
-torch
-keybert
