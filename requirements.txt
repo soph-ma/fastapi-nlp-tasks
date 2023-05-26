@@ -2,5 +2,4 @@ fastapi
 pydantic
 nltk
 numpy
-keybert
 uvicorn
