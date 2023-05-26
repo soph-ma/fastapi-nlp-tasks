@@ -9,8 +9,8 @@ from summarizer import Summarizer
 # from keywords import KeyWordsExtractor
 # from language_detector.training import prediction
 
-nltk.download('stopwords')
-nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('punkt')
 
 class Text(BaseModel): 
     text: str
