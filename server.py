@@ -6,8 +6,8 @@ import uvicorn
 import nltk
 from frequencies import create_freq_dist
 from summarizer import Summarizer
-from keywords import KeyWordsExtractor
-from language_detector.training import prediction
+# from keywords import KeyWordsExtractor
+# from language_detector.training import prediction
 
 nltk.download('stopwords')
 nltk.download('punkt')
