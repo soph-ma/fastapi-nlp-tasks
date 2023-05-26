@@ -34,12 +34,12 @@ async def freq_dict(text: Text) -> JSONResponse:
     summary = summarizer.summarize()
     return JSONResponse({"Summary": summary})
 
-@app.post("/kwords")
-async def kwords(text: Text) -> JSONResponse: 
-    raw_text = text.text
-    kwords_extractor = KeyWordsExtractor(raw_text)
-    keywords = kwords_extractor.extract_keywords()
-    return JSONResponse({"Keywords": keywords})
+# @app.post("/kwords")
+# async def kwords(text: Text) -> JSONResponse: 
+#     raw_text = text.text
+#     kwords_extractor = KeyWordsExtractor(raw_text)
+#     keywords = kwords_extractor.extract_keywords()
+#     return JSONResponse({"Keywords": keywords})
 
 # @app.post("/detect_lang")
 # async def detect_lang(text: Text) -> JSONResponse: 
