@@ -41,11 +41,11 @@ async def kwords(text: Text) -> JSONResponse:
     keywords = kwords_extractor.extract_keywords()
     return JSONResponse({"Keywords": keywords})
 
-@app.post("/detect_lang")
-async def detect_lang(text: Text) -> JSONResponse: 
-    raw_text = text.text
-    language = prediction(raw_text)
-    return JSONResponse({"Language": language})
+# @app.post("/detect_lang")
+# async def detect_lang(text: Text) -> JSONResponse: 
+#     raw_text = text.text
+#     language = prediction(raw_text)
+#     return JSONResponse({"Language": language})
 
 
 if __name__ == "__main__": 
