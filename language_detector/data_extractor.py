@@ -4,7 +4,6 @@ from sklearn.preprocessing import LabelBinarizer
 import numpy as np
 import random
 import re
-import json
 
 class DataExtractor:
     def __init__(self, languages: dict):

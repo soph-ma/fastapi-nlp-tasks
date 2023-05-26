@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import uvicorn
+# import uvicorn
 import nltk
 from frequencies import create_freq_dist
 from summarizer import Summarizer
