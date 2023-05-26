@@ -1,23 +1,57 @@
-from nltk.corpus import udhr
+from nltk.corpus import udhr, swadesh
 from nltk import sent_tokenize
 from sklearn.preprocessing import LabelBinarizer
 import numpy as np
+import random
 import re
+import json
 
 class DataExtractor:
     def __init__(self, languages: dict):
         self.languages = languages
+        self.dictionary = self._create_dict()
 
-    def create_dict(self) -> dict:
+    def _enlarge_text(self, text: str, num_sentences: int = 120000) -> str:
+        """ Artificially creates more sentences for a given text """
+        words = text.split()
+        word_dict = {}
+
+        # building a dictionary of word transitions
+        for i in range(len(words) - 1):
+            if words[i] not in word_dict:
+                word_dict[words[i]] = []
+            word_dict[words[i]].append(words[i+1])
+
+        new_text = []
+        current_word = random.choice(words)
+        new_text.append(current_word)
+
+        # generating new sentences based on the Markov chain transitions
+        while len(new_text) < num_sentences:
+            if current_word not in word_dict:
+                current_word = random.choice(words)
+                new_text.append(current_word)
+            else:
+                next_word = random.choice(word_dict[current_word])
+                current_word = next_word
+                new_text.append(next_word)
+        return text + ' '.join(new_text)
+
+    def _create_dict(self) -> dict:
         dictionary = {}
         value = 1
         for lang in self.languages: 
-            raw = udhr.raw(lang["lang"])
-            for letter in raw.lower(): 
+            if lang["swadesh"] == None:
+                raw = udhr.raw(lang["lang"]).lower()
+            else: 
+                swadesh_words = swadesh.words(lang["swadesh"])
+                swadesh_text = " ".join(([" ".join(swadesh_words[i:i+5]) + "." for i in range(0, len(swadesh_words), 5)]))
+                raw = udhr.raw(lang["lang"]).lower() + swadesh_text
+            for letter in raw: 
                 if letter not in dictionary.keys():
                     dictionary[letter] = value
                     value += 1
-            lang["text"] = raw.lower()
+            lang["text"] = raw
         return dictionary
             
     def hot_encode(self): 
@@ -28,19 +62,22 @@ class DataExtractor:
             lang["ohe_label"] = list(label)
 
     
-    def process_data(self, maxlen=25): 
-        dictionary = self.create_dict()
+    def process_data(self, maxlen=125): 
         self.hot_encode()
         X, y = [], []
         for lang in self.languages: 
             text = lang["text"]
-            for sent in sent_tokenize(text): 
-                sent = [l for l in sent if l.isalpha()]
+            text = self._enlarge_text(text)
+            if lang["lang"] == "Chinese_Mandarin-GB2312" or lang["lang"] == "Japanese_Nihongo-UTF8": # langs that do not use full stop for sentence division
+                text = [text[i:i+125] for i in range(0, len(text), 125)] 
+            else: text = sent_tokenize(text)
+            for sent in text: 
+                sent = [l for l in sent]
                 for l, i in zip(sent, range(len(sent))):
-                    if l not in dictionary: 
+                    if l not in self.dictionary: 
                         sent[i] = 0
                     else: 
-                        sent[i] = dictionary[l]
+                        sent[i] = self.dictionary[l]
                 # padding
                 if len(sent) > maxlen: 
                     sent = sent[:maxlen]
@@ -52,14 +89,13 @@ class DataExtractor:
                 y.append(lang["ohe_label"])
         return X, y
             
-    def process_text(self, text: str, maxlen=25): 
-        dictionary = self.create_dict()
-        text = [l.lower() for l in text if l.isalpha()]
+    def process_text(self, text: str, maxlen=125): 
+        text = [l.lower() for l in text]
         for l, i in zip(text, range(len(text))):
-            if l not in dictionary: 
+            if l not in self.dictionary: 
                 text[i] = 0
             else: 
-                text[i] = dictionary[l]
+                text[i] = self.dictionary[l]
         # padding
         if len(text) > maxlen: 
             text = text[:maxlen]
@@ -72,7 +108,7 @@ class DataExtractor:
     def convert_prediction_to_langname(self, prediction: int) -> str: 
         self.hot_encode()
         split_symbols = r"[-_]"
-        zeros_list = [0] * 28 # 29 languages
+        zeros_list = [0] * 27 # 29 languages
         zeros_list[prediction] = 1
         for entry in self.languages: 
             if entry["ohe_label"] == zeros_list: 
